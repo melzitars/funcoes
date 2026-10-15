@@ -1,4 +1,3 @@
-const caixaPrincipal = document.querySelector(".caixa-principal");
 const caixaPerguntas = document.querySelector(".caixa-perguntas");
 const caixaAlternativas = document.querySelector(".caixa-alternativas");
 const caixaResultado = document.querySelector(".caixa-resultado");
@@ -46,19 +45,45 @@ const perguntas = [
 
 let atual = 0;
 let perguntaAtual;
+let historiaFinal = "";
 
 function mostraPergunta() {
+  if (atual >= perguntas.length) {
+    mostraResultado();
+    return;
+  }
+
   perguntaAtual = perguntas[atual];
   caixaPerguntas.textContent = perguntaAtual.enunciado;
+  caixaAlternativas.textContent = "";
   mostraAlternativas();
 }
 
 function mostraAlternativas() {
-  for (const alternativa of perguntaAtual.alternativas) {
+  perguntaAtual.alternativas.forEach((alternativa) => {
     const botaoAlternativas = document.createElement("button");
     botaoAlternativas.textContent = alternativa;
+    botaoAlternativas.type = "button";
+    botaoAlternativas.addEventListener("click", () => respostaSelecionada(alternativa));
     caixaAlternativas.appendChild(botaoAlternativas);
+  });
+}
+
+function respostaSelecionada(opcaoSelecionada) {
+  if (opcaoSelecionada) {
+    historiaFinal += opcaoSelecionada + " ";
   }
+
+  atual++;
+  mostraPergunta();
+}
+
+function mostraResultado() {
+  caixaPerguntas.textContent = "Conclusão da sua reflexão sobre a IA";
+  caixaAlternativas.textContent = "";
+  textoResultado.textContent =
+    historiaFinal.trim() || "Você ainda precisa refletir mais sobre as implicações da IA.";
+  caixaResultado.style.display = "block";
 }
 
 mostraPergunta();
